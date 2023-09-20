@@ -1,5 +1,6 @@
 import 'package:admin/controllers/MenuAppController.dart';
 import 'package:admin/responsive.dart';
+import 'package:admin/values/position_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,8 @@ import '../../constants.dart';
 
 class HeaderComponent extends StatelessWidget {
   final String title;
-  const HeaderComponent({Key? key, this.title = ""}) : super(key: key);
+  final Function()? onClickBack;
+  const HeaderComponent({Key? key, this.title = "", this.onClickBack}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +22,21 @@ class HeaderComponent extends StatelessWidget {
             onPressed: context.read<MenuAppController>().controlMenu,
           ),
         if (!Responsive.isMobile(context))
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Row(
+            children: [
+              onClickBack != null
+                  ? Row(children: [
+                      IconButton(onPressed: onClickBack, icon: Icon(Icons.arrow_back)),
+                      H(8),
+                    ])
+                  : Container(),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ],
+          )
+
         // if (!Responsive.isMobile(context)) Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
         // Expanded(child: SearchField()),
         // ProfileCard()

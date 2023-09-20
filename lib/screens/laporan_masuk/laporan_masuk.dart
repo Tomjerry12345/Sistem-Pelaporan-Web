@@ -3,10 +3,26 @@ import 'package:flutter/material.dart';
 import '../../constants.dart';
 import '../../components/header/header_component.dart';
 
-import 'components/sub_header.dart';
+import '../../models/Data.dart';
+import '../globals/detail_laporan_screen.dart';
 import 'components/table_data.dart';
 
-class LaporanMasukScreen extends StatelessWidget {
+class LaporanMasukScreen extends StatefulWidget {
+  @override
+  State<LaporanMasukScreen> createState() => _LaporanMasukScreenState();
+}
+
+class _LaporanMasukScreenState extends State<LaporanMasukScreen> {
+  Data? data;
+  String? id;
+
+  void onClickDetail(data, id) {
+    setState(() {
+      this.data = data;
+      this.id = id;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -17,6 +33,14 @@ class LaporanMasukScreen extends StatelessWidget {
           children: [
             HeaderComponent(
               title: "Laporan Masuk",
+              onClickBack: data == null
+                  ? null
+                  : () {
+                      setState(() {
+                        this.data = null;
+                        this.id = null;
+                      });
+                    },
             ),
             SizedBox(height: defaultPadding),
             Row(
@@ -26,9 +50,9 @@ class LaporanMasukScreen extends StatelessWidget {
                   flex: 5,
                   child: Column(
                     children: [
-                      // SubHeader(),
-                      // SizedBox(height: defaultPadding),
-                      TableData(),
+                      data == null
+                          ? TableData(onClickDetail: onClickDetail)
+                          : DetailLaporanScreen(data: data!, id: id!),
                     ],
                   ),
                 ),

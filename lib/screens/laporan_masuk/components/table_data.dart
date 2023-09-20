@@ -1,18 +1,17 @@
 import 'package:admin/models/Data.dart';
 import 'package:admin/services/firebase_services.dart';
-import 'package:admin/values/output_utils.dart';
-import 'package:admin/values/position_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../constants.dart';
+import '../../../values/navigate_utils.dart';
+import '../../globals/detail_laporan_screen.dart';
 
 class TableData extends StatefulWidget {
-  const TableData({
-    Key? key,
-  }) : super(key: key);
+  final void Function(dynamic d, dynamic id)? onClickDetail;
+  const TableData({Key? key, this.onClickDetail}) : super(key: key);
 
   @override
   State<TableData> createState() => _TableDataState();
@@ -65,7 +64,7 @@ class _TableDataState extends State<TableData> {
                       ],
                       rows: List.generate(
                         data!.length,
-                        (index) => demoDataRow(data[index], context, fs, setState, _controller),
+                        (index) => demoDataRow(data[index], context, fs, widget.onClickDetail),
                       ),
                     ),
                   ),
@@ -80,7 +79,7 @@ class _TableDataState extends State<TableData> {
 }
 
 DataRow demoDataRow(QueryDocumentSnapshot<Map<String, dynamic>> snap, context, fs,
-    void Function(VoidCallback fn) setState, _controller) {
+    void Function(dynamic d, dynamic id)? onClickDetail) {
   final id = snap.id;
   final data = Data.fromJson(snap.data());
 
@@ -94,108 +93,7 @@ DataRow demoDataRow(QueryDocumentSnapshot<Map<String, dynamic>> snap, context, f
           children: [
             ElevatedButton(
                 onPressed: () async {
-                  await showDialog<void>(
-                      context: context,
-                      builder: (context) {
-                        if (data.typeFile == "video") {
-                          setState(() {
-                            _controller = VideoPlayerController.networkUrl(Uri.parse(data.file))
-                              ..initialize().then((_) {});
-                          });
-                        }
-
-                        return AlertDialog(
-                          content: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(data.jenisLaporan),
-                              V(32),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 50,
-                                        height: 50,
-                                        child: CircleAvatar(child: Text("A")),
-                                      ),
-                                      H(16),
-                                      Text(data.nama)
-                                    ],
-                                  ),
-                                  Text(data.tanggal)
-                                ],
-                              ),
-                              V(24),
-                              Text(
-                                data.deskripsi,
-                              ),
-                              V(16),
-                              // Center(
-                              //   child: Container(
-                              //     width: 300,
-                              //     height: 150,
-                              //     child: data.typeFile == "image"
-                              //         ? Image.network(data.file)
-                              //         : Text("Video"),
-                              //   ),
-                              // ),
-                              Center(
-                                child: Container(
-                                  width: 300,
-                                  height: 150,
-                                  child: data.typeFile == "image"
-                                      ? Image.network(data.file)
-                                      : _controller != null
-                                          ? AspectRatio(
-                                              aspectRatio: _controller.value.aspectRatio,
-                                              child: VideoPlayer(_controller),
-                                            )
-                                          : Text("Kosong"),
-                                ),
-                              ),
-                              V(16),
-                              data.typeFile == "video"
-                                  ? Center(
-                                      child: ElevatedButton(
-                                          child: _controller.value.isPlaying
-                                              ? Text("Pause video")
-                                              : Text("Play video"),
-                                          onPressed: () {
-                                            setState(() {
-                                              _controller.value.isPlaying
-                                                  ? _controller.pause()
-                                                  : _controller.play();
-                                            });
-                                          }),
-                                    )
-                                  : Container(),
-                              V(16),
-                              Expanded(
-                                  child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                        child: Text("Verifikasi laporan"),
-                                        onPressed: () async {
-                                          try {
-                                            showLoaderDialog(context);
-                                            await fs.updateDataSpecifictDoc(
-                                                "laporan", id, {"type": "keluar"});
-                                            // navigatePush(const LaporanScreen(), isRemove: true);
-                                          } catch (e) {
-                                            showToast(e);
-                                            closeDialog(context);
-                                          }
-                                        })),
-                              )),
-                            ],
-                          ),
-                        );
-                      });
+                  if (onClickDetail != null) onClickDetail(data, id);
                 },
                 child: Text("Detail")),
             Padding(
@@ -209,12 +107,5 @@ DataRow demoDataRow(QueryDocumentSnapshot<Map<String, dynamic>> snap, context, f
         ),
       ),
     ],
-  );
-}
-
-Widget TextDialog(title) {
-  return Padding(
-    padding: const EdgeInsets.all(8),
-    child: Text(title),
   );
 }

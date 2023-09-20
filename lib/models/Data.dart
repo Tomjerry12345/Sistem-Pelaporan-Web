@@ -19,6 +19,7 @@ class Data {
       deskripsi: data["deskripsi"],
       type: data["type"],
       typeFile: data["type_file"],
+      file: data["file"],
       lokasi: data["lokasi"],
     );
   }
