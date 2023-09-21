@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 import '../../components/header/header_component.dart';
-
-import 'components/sub_header.dart';
 import 'components/table_data.dart';
 
 class LaporanKeluarScreen extends StatelessWidget {
@@ -26,9 +24,7 @@ class LaporanKeluarScreen extends StatelessWidget {
                   flex: 5,
                   child: Column(
                     children: [
-                      // SubHeader(),
-                      // SizedBox(height: defaultPadding),
-                      // TableData(),
+                      TableData(),
                     ],
                   ),
                 ),
