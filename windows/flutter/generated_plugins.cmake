@@ -1,61 +1,27 @@
+#
+# Generated file, do not edit.
+#
 
-  };
+list(APPEND FLUTTER_PLUGIN_LIST
+  file_selector_windows
+  firebase_auth
+  firebase_core
+  geolocator_windows
+)
 
-  return listPerusahaan[q];
-};
+list(APPEND FLUTTER_FFI_PLUGIN_LIST
+)
 
-export const getMonthDuration = () => {
-  const listDuration = [
-    {
-      value: "1",
-      label: "1",
-    },
-    {
-      value: "2",
-      label: "2",
-    },
-    {
-      value: "3",
-      label: "3",
-    },
-    {
-      value: "4",
-      label: "4",
-    },
-    {
-      value: "5",
-      label: "5",
-    },
-    {
-      value: "6",
-      label: "6",
-    },
-    {
-      value: "7",
-      label: "7",
-    },
-    {
-      value: "8",
-      label: "8",
-    },
-    {
-      value: "9",
-      label: "9",
-    },
-    {
-      value: "10",
-      label: "10",
-    },
-    {
-      value: "11",
-      label: "11",
-    },
-    {
-      value: "12",
-      label: "12",
-    },
-  ];
-  return listDuration;
-};
+set(PLUGIN_BUNDLED_LIBRARIES)
 
-export const mo
+foreach(plugin ${FLUTTER_PLUGIN_LIST})
+  add_subdirectory(flutter/ephemeral/.plugin_symlinks/${plugin}/windows plugins/${plugin})
+  target_link_libraries(${BINARY_NAME} PRIVATE ${plugin}_plugin)
+  list(APPEND PLUGIN_BUNDLED_LIBRARIES $<TARGET_FILE:${plugin}_plugin>)
+  list(APPEND PLUGIN_BUNDLED_LIBRARIES ${${plugin}_bundled_libraries})
+endforeach(plugin)
+
+foreach(ffi_plugin ${FLUTTER_FFI_PLUGIN_LIST})
+  add_subdirectory(flutter/ephemeral/.plugin_symlinks/${ffi_plugin}/windows plugins/${ffi_plugin})
+  list(APPEND PLUGIN_BUNDLED_LIBRARIES ${${ffi_plugin}_bundled_libraries})
+endforeach(ffi_plugin)

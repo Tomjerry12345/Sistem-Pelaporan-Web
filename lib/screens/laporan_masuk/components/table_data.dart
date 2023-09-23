@@ -6,10 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../constants.dart';
-import '../../../values/navigate_utils.dart';
 import '../../../values/output_utils.dart';
-import '../../globals/detail_laporan_screen.dart';
-import '../../main/main_screen.dart';
 
 class TableData extends StatefulWidget {
   final void Function(dynamic d, dynamic id)? onClickDetail;
@@ -23,8 +20,6 @@ class _TableDataState extends State<TableData> {
   @override
   Widget build(BuildContext context) {
     final fs = FirebaseServices();
-
-    VideoPlayerController? _controller;
 
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: fs.getDataQueryStream("laporan", "type", "masuk"),
@@ -66,8 +61,7 @@ class _TableDataState extends State<TableData> {
                       ],
                       rows: List.generate(
                         data!.length,
-                        (index) => demoDataRow(
-                            data[index], context, fs, widget.onClickDetail),
+                        (index) => demoDataRow(data[index], context, fs, widget.onClickDetail),
                       ),
                     ),
                   ),
@@ -81,8 +75,8 @@ class _TableDataState extends State<TableData> {
   }
 }
 
-DataRow demoDataRow(QueryDocumentSnapshot<Map<String, dynamic>> snap, context,
-    fs, void Function(dynamic d, dynamic id)? onClickDetail) {
+DataRow demoDataRow(QueryDocumentSnapshot<Map<String, dynamic>> snap, context, fs,
+    void Function(dynamic d, dynamic id)? onClickDetail) {
   final id = snap.id;
   final data = Data.fromJson(snap.data());
 
@@ -102,12 +96,10 @@ DataRow demoDataRow(QueryDocumentSnapshot<Map<String, dynamic>> snap, context,
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
               child: ElevatedButton(
-                  style:
-                      ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                   onPressed: () async {
                     try {
-                      await fs.updateDataSpecifictDoc(
-                          "laporan", id, {"type": "keluar"});
+                      await fs.updateDataSpecifictDoc("laporan", id, {"type": "keluar"});
                     } catch (e) {
                       showToast(e);
                     }

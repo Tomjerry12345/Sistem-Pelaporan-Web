@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../components/header/header_component.dart';
 import '../../constants.dart';
 import '../../models/Data.dart';
 import '../../services/firebase_services.dart';
@@ -26,6 +25,7 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
   void initState() {
     super.initState();
     print(widget.data.typeFile);
+    print(widget.data.file);
     if (widget.data.typeFile == "video") {
       _controller = VideoPlayerController.networkUrl(Uri.parse(widget.data.file))
         ..initialize().then((_) {
