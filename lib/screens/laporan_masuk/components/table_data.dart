@@ -84,7 +84,7 @@ DataRow demoDataRow(QueryDocumentSnapshot<Map<String, dynamic>> snap, context, f
     cells: [
       DataCell(Text(data.nama)),
       DataCell(Text(data.jenisLaporan)),
-      DataCell(Text(data.deskripsi)),
+      DataCell(Text(data.deskripsi.substring(0, 30) + "...")),
       DataCell(
         Row(
           children: [

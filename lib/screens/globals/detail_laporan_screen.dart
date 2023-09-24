@@ -32,17 +32,13 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
           // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
           setState(() {});
         });
+
+      print(_controller.value.aspectRatio);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // VideoPlayerController _controller = VideoPlayerController.networkUrl(Uri.parse(
-    //     "https://firebasestorage.googleapis.com/v0/b/sistem-pelaporan-8e835.appspot.com/o/laporan%2FVID-20230813-WA0001.mp4?alt=media&token=aa37f5ea-7517-403d-b8b6-7d4b80411565"))
-    //   ..initialize().then((_) {
-    //     // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-    //     setState(() {});
-    //   });
     return SafeArea(
       child: SingleChildScrollView(
         primary: false,
@@ -55,8 +51,13 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                 Expanded(
                   flex: 5,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.data.jenisLaporan),
+                      Text(
+                        widget.data.jenisLaporan,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
                       V(32),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -66,7 +67,7 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                               Container(
                                 width: 50,
                                 height: 50,
-                                child: CircleAvatar(child: Text("A")),
+                                child: CircleAvatar(child: Text(widget.data.nama[0].toUpperCase())),
                               ),
                               H(16),
                               Text(widget.data.nama)
@@ -77,11 +78,11 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                       ),
                       V(24),
                       Text(widget.data.deskripsi),
-                      V(16),
+                      V(32),
                       Center(
                         child: Container(
-                          width: 300,
-                          height: 150,
+                          width: 600,
+                          height: 300,
                           child: widget.data.typeFile == "image"
                               ? Image.network(widget.data.file)
                               : AspectRatio(
@@ -92,35 +93,39 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                       ),
                       V(16),
                       widget.data.typeFile == "video"
-                          ? Container(
-                              child: ElevatedButton(
-                                  child: Text(
-                                      _controller.value.isPlaying ? "Pause video" : "Play video"),
-                                  onPressed: () {
-                                    setState(() {
-                                      _controller.value.isPlaying
-                                          ? _controller.pause()
-                                          : _controller.play();
-                                    });
-                                  }),
+                          ? Center(
+                              child: Container(
+                                child: ElevatedButton(
+                                    child: Text(
+                                        _controller.value.isPlaying ? "Pause video" : "Play video"),
+                                    onPressed: () {
+                                      setState(() {
+                                        _controller.value.isPlaying
+                                            ? _controller.pause()
+                                            : _controller.play();
+                                      });
+                                    }),
+                              ),
                             )
                           : Container(),
-                      V(16),
-                      Container(
-                          width: 300,
-                          child: ElevatedButton(
-                              child: Text("Verifikasi laporan"),
-                              onPressed: () async {
-                                try {
-                                  showLoaderDialog(context);
-                                  await fs.updateDataSpecifictDoc(
-                                      "laporan", widget.id, {"type": "keluar"});
-                                  // navigatePush(const LaporanScreen(), isRemove: true);
-                                } catch (e) {
-                                  showToast(e);
-                                  closeDialog(context);
-                                }
-                              }))
+                      V(32),
+                      Center(
+                        child: Container(
+                            width: 300,
+                            child: ElevatedButton(
+                                child: Text("Verifikasi laporan"),
+                                onPressed: () async {
+                                  try {
+                                    showLoaderDialog(context);
+                                    await fs.updateDataSpecifictDoc(
+                                        "laporan", widget.id, {"type": "keluar"});
+                                    // navigatePush(const LaporanScreen(), isRemove: true);
+                                  } catch (e) {
+                                    showToast(e);
+                                    closeDialog(context);
+                                  }
+                                })),
+                      )
                     ],
                   ),
                 ),
