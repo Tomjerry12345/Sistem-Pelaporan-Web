@@ -83,14 +83,24 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                         child: Container(
                           width: 600,
                           height: 300,
-                          child: widget.data.typeFile == "image"
-                              ? Image.network(widget.data.file)
-                              : AspectRatio(
-                                  aspectRatio: _controller.value.aspectRatio,
-                                  child: VideoPlayer(_controller),
-                                ),
+                          child: AspectRatio(
+                            aspectRatio: _controller.value.aspectRatio,
+                            child: VideoPlayer(_controller),
+                          ),
                         ),
                       ),
+                      // Center(
+                      //   child: Container(
+                      //     width: 600,
+                      //     height: 300,
+                      //     child: widget.data.typeFile == "image"
+                      //         ? Image.network(widget.data.file)
+                      //         : AspectRatio(
+                      //             aspectRatio: _controller.value.aspectRatio,
+                      //             child: VideoPlayer(_controller),
+                      //           ),
+                      //   ),
+                      // ),
                       V(16),
                       widget.data.typeFile == "video"
                           ? Center(
