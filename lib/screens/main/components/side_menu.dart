@@ -4,7 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 class SideMenu extends StatelessWidget {
   final int index;
   final void Function(int i) onTapDrawer;
-  const SideMenu({Key? key, this.index = 0, required this.onTapDrawer}) : super(key: key);
+  const SideMenu({Key? key, this.index = 0, required this.onTapDrawer})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,34 +22,37 @@ class SideMenu extends StatelessWidget {
             ),
           ),
           DrawerListTile(
-            title: "Laporan Masuk",
+            title: "Laporan",
             svgSrc: "assets/icons/menu_dashboard.svg",
             press: () {
               onTapDrawer(0);
             },
             selected: index == 0,
           ),
+          // DrawerListTile(
+          //   title: "Laporan Keluar",
+          //   svgSrc: "assets/icons/menu_tran.svg",
+          //   press: () {
+          //     onTapDrawer(1);
+          //   },
+          //   selected: index == 1,
+          // ),
           DrawerListTile(
-            title: "Laporan Keluar",
-            svgSrc: "assets/icons/menu_tran.svg",
+            title: "Lokasi Kejadian",
+            svgSrc: "assets/icons/menu_task.svg",
             press: () {
               onTapDrawer(1);
             },
             selected: index == 1,
           ),
           DrawerListTile(
-            title: "Lokasi Kejadian",
+            title: "User",
             svgSrc: "assets/icons/menu_task.svg",
             press: () {
               onTapDrawer(2);
             },
             selected: index == 2,
           ),
-          // DrawerListTile(
-          //   title: "Documents",
-          //   svgSrc: "assets/icons/menu_doc.svg",
-          //   press: () {},
-          // ),
           // DrawerListTile(
           //   title: "Store",
           //   svgSrc: "assets/icons/menu_store.svg",

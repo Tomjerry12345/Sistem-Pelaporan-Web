@@ -1,5 +1,6 @@
 import 'package:admin/controllers/MenuAppController.dart';
 import 'package:admin/responsive.dart';
+import 'package:admin/screens/list_user/list_user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,10 +22,14 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       if (i == 0) {
         page = LaporanMasukScreen();
-      } else if (i == 1) {
-        page = LaporanKeluarScreen();
-      } else if (i == 2) {
+      }
+      // else if (i == 1) {
+      //   page = LaporanKeluarScreen();
+      // }
+      else if (i == 1) {
         page = LokasiKejadianScreen();
+      } else if (i == 2) {
+        page = ListUserScreen();
       }
 
       index = i;

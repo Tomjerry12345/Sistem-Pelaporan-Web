@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
             create: (context) => MenuAppController(),
           ),
         ],
-        child: isLogin ? LoginPage(onClickLogin: onClickLogin) : MainScreen(),
+        child: !isLogin ? LoginPage(onClickLogin: onClickLogin) : MainScreen(),
       ),
     );
   }

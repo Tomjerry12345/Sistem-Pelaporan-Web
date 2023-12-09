@@ -1,11 +1,10 @@
-import 'package:admin/models/Data.dart';
+import 'package:admin/models/DataUser.dart';
 import 'package:admin/services/firebase_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 
 import '../../../constants.dart';
-import '../../../values/output_utils.dart';
 
 class TableData extends StatefulWidget {
   final void Function(dynamic d, dynamic id)? onClickDetail;
@@ -21,7 +20,7 @@ class _TableDataState extends State<TableData> {
     final fs = FirebaseServices();
 
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: fs.getDataStreamCollection("laporan"),
+        stream: fs.getDataQueryStream("user", "type", "user"),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final data = snapshot.data?.docs;
@@ -49,13 +48,16 @@ class _TableDataState extends State<TableData> {
                           label: Text("Nama"),
                         ),
                         DataColumn(
-                          label: Text("Jenis Laporan"),
+                          label: Text("NIK"),
                         ),
                         DataColumn(
-                          label: Text("Deskripsi"),
+                          label: Text("Jenis Kelamin"),
                         ),
                         DataColumn(
-                          label: Text("Action"),
+                          label: Text("Email"),
+                        ),
+                        DataColumn(
+                          label: Text("No Telepon"),
                         ),
                       ],
                       rows: List.generate(
@@ -77,42 +79,15 @@ class _TableDataState extends State<TableData> {
 
 DataRow demoDataRow(QueryDocumentSnapshot<Map<String, dynamic>> snap, context,
     fs, void Function(dynamic d, dynamic id)? onClickDetail) {
-  final id = snap.id;
-  final data = Data.fromJson(snap.data());
+  final data = DataUser.fromJson(snap.data());
 
   return DataRow(
     cells: [
       DataCell(Text(data.nama)),
-      DataCell(Text(data.jenisLaporan)),
-      DataCell(data.deskripsi.length > 30
-          ? Text(data.deskripsi.substring(0, 30) + "...")
-          : Text(data.deskripsi)),
-      DataCell(
-        Row(
-          children: [
-            ElevatedButton(
-                onPressed: () async {
-                  if (onClickDetail != null) onClickDetail(data, id);
-                },
-                child: Text("Detail")),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-              child: ElevatedButton(
-                  style:
-                      ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                  onPressed: () async {
-                    try {
-                      await fs.updateDataSpecifictDoc(
-                          "laporan", id, {"type": "keluar"});
-                    } catch (e) {
-                      showToast(e);
-                    }
-                  },
-                  child: Text("Verifikasi")),
-            ),
-          ],
-        ),
-      ),
+      DataCell(Text(data.nik)),
+      DataCell(Text(data.jenisKelamin)),
+      DataCell(Text(data.email)),
+      DataCell(Text(data.noTelepon)),
     ],
   );
 }
