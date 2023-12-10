@@ -1,5 +1,8 @@
+import 'package:admin/components/text/text_component.dart';
+import 'package:admin/components/textfield/textfield_component.dart';
 import 'package:admin/models/Data.dart';
 import 'package:admin/services/firebase_services.dart';
+import 'package:admin/values/dialog_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
@@ -16,10 +19,12 @@ class TableData extends StatefulWidget {
 }
 
 class _TableDataState extends State<TableData> {
+  final fs = FirebaseServices();
+
+  final txtAlasanController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    final fs = FirebaseServices();
-
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: fs.getDataStreamCollection("laporan"),
         builder: (context, snapshot) {
@@ -61,7 +66,7 @@ class _TableDataState extends State<TableData> {
                       rows: List.generate(
                         data!.length,
                         (index) => demoDataRow(
-                            data[index], context, fs, widget.onClickDetail),
+                            data[index], context, widget.onClickDetail),
                       ),
                     ),
                   ),
@@ -73,46 +78,74 @@ class _TableDataState extends State<TableData> {
           return CircularProgressIndicator();
         });
   }
-}
 
-DataRow demoDataRow(QueryDocumentSnapshot<Map<String, dynamic>> snap, context,
-    fs, void Function(dynamic d, dynamic id)? onClickDetail) {
-  final id = snap.id;
-  final data = Data.fromJson(snap.data());
+  DataRow demoDataRow(QueryDocumentSnapshot<Map<String, dynamic>> snap, context,
+      void Function(dynamic d, dynamic id)? onClickDetail) {
+    final id = snap.id;
+    final data = Data.fromJson(snap.data());
 
-  return DataRow(
-    cells: [
-      DataCell(Text(data.nama)),
-      DataCell(Text(data.jenisLaporan)),
-      DataCell(data.deskripsi.length > 30
-          ? Text(data.deskripsi.substring(0, 30) + "...")
-          : Text(data.deskripsi)),
-      DataCell(
-        Row(
-          children: [
-            ElevatedButton(
-                onPressed: () async {
-                  if (onClickDetail != null) onClickDetail(data, id);
-                },
-                child: Text("Detail")),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-              child: ElevatedButton(
-                  style:
-                      ElevatedButton.styleFrom(backgroundColor: Colors.green),
+    return DataRow(
+      cells: [
+        DataCell(Text(data.nama)),
+        DataCell(Text(data.jenisLaporan)),
+        DataCell(data.deskripsi.length > 30
+            ? Text(data.deskripsi.substring(0, 30) + "...")
+            : Text(data.deskripsi)),
+        DataCell(
+          Row(
+            children: [
+              ElevatedButton(
                   onPressed: () async {
-                    try {
-                      await fs.updateDataSpecifictDoc(
-                          "laporan", id, {"type": "keluar"});
-                    } catch (e) {
-                      showToast(e);
-                    }
+                    if (onClickDetail != null) onClickDetail(data, id);
                   },
-                  child: Text("Verifikasi")),
-            ),
-          ],
+                  child: Text("Detail")),
+              data.konfirmasi
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: defaultPadding),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red),
+                          onPressed: () async {
+                            try {
+                              dialogShow(
+                                  title: "Alasan",
+                                  context: context,
+                                  content: Container(
+                                    width: 200,
+                                    child: TextfieldComponent(
+                                      controller: txtAlasanController,
+                                      size: 14,
+                                      maxLines: 4,
+                                    ),
+                                  ),
+                                  actions: [
+                                    ElevatedButton(
+                                        onPressed: () async {
+                                          await fs.updateDataSpecifictDoc(
+                                              "laporan", id, {
+                                            "konfirmasi": false,
+                                            "message_tolak":
+                                                txtAlasanController.text
+                                          });
+                                          setState(() {
+                                            txtAlasanController.text = "";
+                                          });
+                                          dialogClose(context);
+                                        },
+                                        child: Text("Kirim"))
+                                  ]);
+                            } catch (e) {
+                              showToast(e);
+                            }
+                          },
+                          child: Text("Verifikasi")),
+                    )
+                  : Container()
+            ],
+          ),
         ),
-      ),
-    ],
-  );
+      ],
+    );
+  }
 }

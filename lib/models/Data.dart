@@ -1,5 +1,6 @@
 class Data {
   final String file, nama, jenisLaporan, deskripsi, type, typeFile, tanggal;
+  final bool konfirmasi;
   final Map? lokasi;
 
   Data(
@@ -10,7 +11,8 @@ class Data {
       this.type = "",
       this.typeFile = "",
       this.tanggal = "",
-      this.lokasi});
+      this.lokasi,
+      this.konfirmasi = true});
 
   factory Data.fromJson(Map<String, dynamic> data) {
     return Data(
@@ -21,22 +23,7 @@ class Data {
       typeFile: data["type_file"],
       file: data["file"],
       lokasi: data["lokasi"],
+      konfirmasi: data["konfirmasi"],
     );
   }
 }
-
-List<Data> demoData = [
-  Data(
-    file: "assets/icons/xd_file.svg",
-    nama: "Test Nama",
-    jenisLaporan: "Test Jenis Laporan",
-    deskripsi: "Test Deskripsi",
-    type: "masuk",
-    typeFile: "image",
-    tanggal: "August, 5 2023",
-    lokasi: {
-      "latitude": -5.1586824153460675,
-      "longitude": 119.43967957753794,
-    },
-  ),
-];
