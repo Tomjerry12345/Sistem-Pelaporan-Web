@@ -3,8 +3,6 @@ import 'package:admin/responsive.dart';
 import 'package:admin/screens/list_user/list_user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../laporan_keluar/laporan_keluar.dart';
 import '../laporan_masuk/laporan_masuk.dart';
 import '../lokasi_kejadian/lokasi_kejadian.dart';
 import 'components/side_menu.dart';

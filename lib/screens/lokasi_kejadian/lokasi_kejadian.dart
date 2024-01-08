@@ -1,18 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:admin/services/firebase_services.dart';
 import 'package:admin/values/algorithm_dijkstra.dart';
 import 'package:admin/values/output_utils.dart';
 import 'package:admin/values/position_utils.dart';
 import 'package:flutter/material.dart';
-
 import '../../constants.dart';
-import '../../components/header/header_component.dart';
-
-import 'components/sub_header.dart';
-import 'components/table_data.dart';
-
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -48,7 +41,8 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       showToast("Location services are disabled. Please enable the services");
-      logO("permission", m: "Location services are disabled. Please enable the services");
+      logO("permission",
+          m: "Location services are disabled. Please enable the services");
       return false;
     }
     permission = await Geolocator.checkPermission();
@@ -61,7 +55,8 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      showToast("Location permissions are permanently denied, we cannot request permissions.");
+      showToast(
+          "Location permissions are permanently denied, we cannot request permissions.");
       logO("permission",
           m: "Location permissions are permanently denied, we cannot request permissions.");
       return false;
@@ -159,8 +154,9 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
                 children: [
                   FlutterMap(
                     options: MapOptions(
-                      bounds: LatLngBounds.fromPoints(
-                          userData!.map((uData) => uData["lokasi"] as LatLng).toList()),
+                      bounds: LatLngBounds.fromPoints(userData!
+                          .map((uData) => uData["lokasi"] as LatLng)
+                          .toList()),
                       boundsOptions: FitBoundsOptions(
                         padding: EdgeInsets.only(
                           left: padding,
@@ -172,7 +168,8 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
                     ),
                     nonRotatedChildren: [
                       TileLayer(
-                        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        urlTemplate:
+                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                         subdomains: ['a', 'b', 'c'],
                       ),
                       MarkerLayer(
@@ -195,7 +192,9 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: Container(
-                      height: userData != null ? (userData!.length * 40) + (padding * 2) : 0,
+                      height: userData != null
+                          ? (userData!.length * 40) + (padding * 2)
+                          : 0,
                       child: ListView.builder(
                         itemBuilder: (ctx, i) {
                           final value = userData![i];
@@ -210,8 +209,10 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
                                   leading: CircleAvatar(child: Text("A")),
                                   title: Text(value["nama"]),
                                   subtitle: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(value["nama"]),
                                         V(8),

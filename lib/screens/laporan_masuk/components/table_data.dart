@@ -1,4 +1,3 @@
-import 'package:admin/components/text/text_component.dart';
 import 'package:admin/components/textfield/textfield_component.dart';
 import 'package:admin/models/Data.dart';
 import 'package:admin/services/firebase_services.dart';

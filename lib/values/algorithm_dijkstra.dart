@@ -1,7 +1,5 @@
 import 'dart:math';
 
-import 'output_utils.dart';
-
 class Point {
   final double latitude;
   final double longitude;
@@ -15,8 +13,8 @@ class Dijkstra {
   late final Map<Point, Point?> previous;
 
   Dijkstra(this.nodes, this.edges) {
-    previous =
-        Map<Point, Point?>.fromIterables(nodes, List.generate(nodes.length, (index) => null));
+    previous = Map<Point, Point?>.fromIterables(
+        nodes, List.generate(nodes.length, (index) => null));
   }
 
   Map<Point, double> findShortestPath(Point start) {
@@ -110,7 +108,8 @@ double calculateDistance(Point a, Point b) {
   var lat1 = degreesToRadians(a.latitude);
   var lat2 = degreesToRadians(b.latitude);
 
-  var haversine = pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(lat1) * cos(lat2);
+  var haversine =
+      pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(lat1) * cos(lat2);
   var c = 2 * atan2(sqrt(haversine), sqrt(1 - haversine));
 
   return earthRadius * c;

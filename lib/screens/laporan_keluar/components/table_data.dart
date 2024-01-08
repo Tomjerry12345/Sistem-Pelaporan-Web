@@ -20,8 +20,6 @@ class _TableDataState extends State<TableData> {
   Widget build(BuildContext context) {
     final fs = FirebaseServices();
 
-    VideoPlayerController? _controller;
-
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: fs.getDataQueryStream("laporan", "type", "keluar"),
         builder: (context, snapshot) {
@@ -79,7 +77,6 @@ class _TableDataState extends State<TableData> {
 
 DataRow demoDataRow(QueryDocumentSnapshot<Map<String, dynamic>> snap, context,
     fs, void Function(dynamic d, dynamic id)? onClickDetail) {
-  final id = snap.id;
   final data = Data.fromJson(snap.data());
 
   return DataRow(
