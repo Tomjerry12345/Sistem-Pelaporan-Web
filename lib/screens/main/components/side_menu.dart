@@ -1,5 +1,5 @@
+import 'package:admin/values/position_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class SideMenu extends StatelessWidget {
   final int index;
@@ -23,7 +23,7 @@ class SideMenu extends StatelessWidget {
           ),
           DrawerListTile(
             title: "Laporan",
-            svgSrc: "assets/icons/menu_dashboard.svg",
+            svgSrc: Icons.bookmark,
             press: () {
               onTapDrawer(0);
             },
@@ -39,7 +39,7 @@ class SideMenu extends StatelessWidget {
           // ),
           DrawerListTile(
             title: "Lokasi Kejadian",
-            svgSrc: "assets/icons/menu_task.svg",
+            svgSrc: Icons.location_on,
             press: () {
               onTapDrawer(1);
             },
@@ -47,31 +47,19 @@ class SideMenu extends StatelessWidget {
           ),
           DrawerListTile(
             title: "User",
-            svgSrc: "assets/icons/menu_task.svg",
+            svgSrc: Icons.people,
             press: () {
               onTapDrawer(2);
             },
             selected: index == 2,
           ),
           // DrawerListTile(
-          //   title: "Store",
-          //   svgSrc: "assets/icons/menu_store.svg",
-          //   press: () {},
-          // ),
-          // DrawerListTile(
-          //   title: "Notification",
-          //   svgSrc: "assets/icons/menu_notification.svg",
-          //   press: () {},
-          // ),
-          // DrawerListTile(
-          //   title: "Profile",
-          //   svgSrc: "assets/icons/menu_profile.svg",
-          //   press: () {},
-          // ),
-          // DrawerListTile(
-          //   title: "Settings",
-          //   svgSrc: "assets/icons/menu_setting.svg",
-          //   press: () {},
+          //   title: "Logout",
+          //   svgSrc: Icons.logout,
+          //   press: () {
+          //     onTapDrawer(3);
+          //   },
+          //   selected: index == 3,
           // ),
         ],
       ),
@@ -80,7 +68,8 @@ class SideMenu extends StatelessWidget {
 }
 
 class DrawerListTile extends StatelessWidget {
-  final String title, svgSrc;
+  final String title;
+  final IconData svgSrc;
   final bool selected;
   final VoidCallback press;
 
@@ -98,14 +87,20 @@ class DrawerListTile extends StatelessWidget {
     return ListTile(
       onTap: press,
       horizontalTitleGap: 0.0,
-      leading: SvgPicture.asset(
-        svgSrc,
-        colorFilter: ColorFilter.mode(Colors.white54, BlendMode.srcIn),
-        height: 16,
-      ),
-      title: Text(
-        title,
-        style: TextStyle(color: Colors.white54),
+      leading: Icon(svgSrc, color: Colors.grey,),
+      // SvgPicture.asset(
+      //   svgSrc,
+      //   colorFilter: ColorFilter.mode(Colors.white54, BlendMode.srcIn),
+      //   height: 16,
+      // ),
+      title: Row(
+        children: [
+          H(16),
+          Text(
+            title,
+            style: TextStyle(color: Colors.white54),
+          ),
+        ],
       ),
       selected: selected,
     );

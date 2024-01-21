@@ -1,16 +1,17 @@
+import 'package:admin/components/text/text_component.dart';
 import 'package:admin/controllers/MenuAppController.dart';
 import 'package:admin/responsive.dart';
 import 'package:admin/values/position_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-
 import '../../constants.dart';
 
 class HeaderComponent extends StatelessWidget {
   final String title;
   final Function()? onClickBack;
-  const HeaderComponent({Key? key, this.title = "", this.onClickBack}) : super(key: key);
+  final Function()? onClickExportData;
+  const HeaderComponent({Key? key, this.title = "", this.onClickBack, this.onClickExportData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +36,10 @@ class HeaderComponent extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ],
-          )
+          ),
 
-        // if (!Responsive.isMobile(context)) Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
+        if (!Responsive.isMobile(context)) Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
+        ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: onClickExportData, child: TextComponent("Export data", color: Colors.white, size: 14,))
         // Expanded(child: SearchField()),
         // ProfileCard()
       ],

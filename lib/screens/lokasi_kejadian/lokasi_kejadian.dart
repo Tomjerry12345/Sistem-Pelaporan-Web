@@ -41,8 +41,6 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       showToast("Location services are disabled. Please enable the services");
-      logO("permission",
-          m: "Location services are disabled. Please enable the services");
       return false;
     }
     permission = await Geolocator.checkPermission();
@@ -50,15 +48,12 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         showToast("Location permissions are denied");
-        logO("permission", m: "Location permissions are denied");
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
       showToast(
           "Location permissions are permanently denied, we cannot request permissions.");
-      logO("permission",
-          m: "Location permissions are permanently denied, we cannot request permissions.");
       return false;
     }
     return true;
@@ -83,11 +78,6 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
       if (position != null) {
         getDistance(position);
       }
-
-      logO("position",
-          m: position == null
-              ? 'Unknown'
-              : '${position.latitude.toString()}, ${position.longitude.toString()}');
     });
   }
 
@@ -133,14 +123,11 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
         });
       }
 
-      print(listDatauser);
-
       setState(() {
         userData = listDatauser;
       });
     } catch (e) {
       showToast(e);
-      logO("e", m: e);
     }
   }
 
@@ -191,41 +178,42 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
                   ),
                   Align(
                     alignment: Alignment.bottomLeft,
-                    child: Container(
-                      height: userData != null
-                          ? (userData!.length * 40) + (padding * 2)
-                          : 0,
-                      child: ListView.builder(
-                        itemBuilder: (ctx, i) {
-                          final value = userData![i];
+                    child: SingleChildScrollView(
+                      child: Container(
+                        height: 300,
+                        child: ListView.builder(
+                          itemBuilder: (ctx, i) {
+                            final value = userData![i];
 
-                          final jarak = value["jarak"] as double;
-                          if (i > 0) {
-                            return Card(
-                              color: Colors.white,
-                              child: InkWell(
-                                onTap: () {},
-                                child: ListTile(
-                                  leading: CircleAvatar(child: Text("A")),
-                                  title: Text(value["nama"]),
-                                  subtitle: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(value["nama"]),
-                                        V(8),
-                                        Text("${jarak.toStringAsFixed(2)} km"),
-                                      ]),
-                                  // trailing: Icon(Icons.arrow_right),
+                            final jarak = value["jarak"] as double;
+                            if (i > 0) {
+                              return Card(
+                                color: Colors.white,
+                                child: InkWell(
+                                  onTap: () {},
+                                  child: ListTile(
+                                    leading: CircleAvatar(child: Text("A")),
+                                    title: Text(value["nama"]),
+                                    subtitle: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(value["nama"]),
+                                          V(8),
+                                          Text(
+                                              "${jarak.toStringAsFixed(2)} km"),
+                                        ]),
+                                    // trailing: Icon(Icons.arrow_right),
+                                  ),
                                 ),
-                              ),
-                            );
-                          }
-                          return Container();
-                        },
-                        itemCount: userData?.length,
+                              );
+                            }
+                            return Container();
+                          },
+                          itemCount: userData?.length,
+                        ),
                       ),
                     ),
                   )

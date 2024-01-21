@@ -1,3 +1,4 @@
+import 'package:admin/values/screen_utils.dart';
 import 'package:flutter/material.dart';
 
 import 'logic.dart';
@@ -40,7 +41,7 @@ class Body extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
-          width: 360,
+          width: 0.3.w,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -64,7 +65,7 @@ class Body extends StatelessWidget {
 
         Image.asset(
           'images/illustration-1.png',
-          width: 300,
+          width: 0.2.w,
         ),
         // MediaQuery.of(context).size.width >= 1300 //Responsive
         //     ? Image.asset(
@@ -75,7 +76,7 @@ class Body extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height / 6),
           child: Container(
-            width: 320,
+            width: 0.24.w,
             child: _formLogin(context, onClickLogin),
           ),
         )

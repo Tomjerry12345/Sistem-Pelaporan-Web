@@ -17,6 +17,8 @@ Future<void> main() async {
   runApp(MyApp());
 }
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
@@ -39,6 +41,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Flutter Admin Panel',
       theme: ThemeData.dark().copyWith(

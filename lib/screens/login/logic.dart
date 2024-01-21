@@ -9,13 +9,11 @@ class Logic {
     final username = this.username.text;
     final password = this.password.text;
 
-    print(username + " " + password);
-
     if (username == "admin" && password == "55555") {
-      onClickLogin!(false);
+      onClickLogin!(true);
       // navigatePush(context, MainScreen(), isRemove: true);
     } else {
-      onClickLogin!(true);
+      onClickLogin!(false);
       showToast("Username atau kata sandi salah");
     }
   }

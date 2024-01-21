@@ -1,6 +1,9 @@
 import 'package:admin/controllers/MenuAppController.dart';
 import 'package:admin/responsive.dart';
 import 'package:admin/screens/list_user/list_user.dart';
+import 'package:admin/screens/login/login_page.dart';
+import 'package:admin/services/firebase_services.dart';
+import 'package:admin/values/navigate_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../laporan_masuk/laporan_masuk.dart';
@@ -13,8 +16,11 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+
   var index = 0;
   Widget page = LaporanMasukScreen();
+
+  final fs = FirebaseServices();
 
   void onTapDrawer(int i) {
     setState(() {
@@ -28,10 +34,17 @@ class _MainScreenState extends State<MainScreen> {
         page = LokasiKejadianScreen();
       } else if (i == 2) {
         page = ListUserScreen();
+      }  else if (i == 3) {
+        onLogout();
       }
 
       index = i;
     });
+  }
+
+  Future<void> onLogout() async {
+    await fs.signOut();
+    navigatePush(context, LoginPage(), isRemove: true);
   }
 
   @override

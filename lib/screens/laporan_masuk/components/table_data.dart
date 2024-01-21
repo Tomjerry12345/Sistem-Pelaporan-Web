@@ -11,7 +11,8 @@ import '../../../values/output_utils.dart';
 
 class TableData extends StatefulWidget {
   final void Function(dynamic d, dynamic id)? onClickDetail;
-  const TableData({Key? key, this.onClickDetail}) : super(key: key);
+  final void Function(List<QueryDocumentSnapshot<Map<String, dynamic>>>? d)? onGetAllData;
+  const TableData({Key? key, this.onClickDetail, this.onGetAllData}) : super(key: key);
 
   @override
   State<TableData> createState() => _TableDataState();
@@ -29,7 +30,7 @@ class _TableDataState extends State<TableData> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final data = snapshot.data?.docs;
-
+            if (widget.onGetAllData != null) widget.onGetAllData!(data);
             return Container(
               padding: EdgeInsets.all(defaultPadding),
               decoration: BoxDecoration(
