@@ -1,120 +1,157 @@
 import 'dart:math';
 
-class Point {
+import 'package:geolocator/geolocator.dart';
+
+class Node {
+  final String name;
   final double latitude;
   final double longitude;
 
-  Point(this.latitude, this.longitude);
+  Node(this.name, this.latitude, this.longitude);
+
+  @override
+  String toString() {
+    return "Node($name, $latitude, $longitude)";
+  }
 }
 
-class Dijkstra {
-  final List<Point> nodes;
-  final Map<Point, Map<Point, double>> edges;
-  late final Map<Point, Point?> previous;
+extension IterableExtension<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T) test) {
+    for (var element in this) {
+      if (test(element)) {
+        return element;
+      }
+    }
+    return null;
+  }
+}
 
-  Dijkstra(this.nodes, this.edges) {
-    previous = Map<Point, Point?>.fromIterables(
-        nodes, List.generate(nodes.length, (index) => null));
+class Graph {
+  final List<Node> nodes;
+  final Map<String, Map<String, double>> _adjacencyMap;
+
+  Graph(this.nodes) : _adjacencyMap = {} {
+    // Inisialisasi map adjacency untuk setiap node
+    for (final node in nodes) {
+      _adjacencyMap[node.name] = {};
+    }
+    // Bangun adjacency map berdasarkan jarak euclidean antar node
+    for (final node1 in nodes) {
+      for (final node2 in nodes) {
+        if (node1 != node2) {
+          final distance = calculateDistance(node1, node2);
+          _adjacencyMap[node1.name]![node2.name] = distance;
+        }
+      }
+    }
   }
 
-  Map<Point, double> findShortestPath(Point start) {
-    var distances = <Point, double>{};
+  // double calculateDistance(Node node1, Node node2) {
+  //   // Hitung jarak Euclidean antara dua node berdasarkan koordinat mereka
+  //   final dx = node1.latitude - node2.latitude;
+  //   final dy = node1.longitude - node2.longitude;
+  //   return sqrt(dx * dx + dy * dy);
+  // }
 
-    nodes.forEach((node) {
-      distances[node] = double.infinity;
-    });
+  double degreesToRadians(double degrees) {
+    return degrees * (pi / 180);
+  }
 
-    distances[start] = 0;
+  double calculateDistance(Node node1, Node node2) {
+    const earthRadius = 6371000; // radius bumi dalam meter
+    final lat1 = degreesToRadians(node1.latitude);
+    final lon1 = degreesToRadians(node1.longitude);
+    final lat2 = degreesToRadians(node2.latitude);
+    final lon2 = degreesToRadians(node2.longitude);
 
-    var unvisitedNodes = List.from(nodes);
+    final dLat = lat2 - lat1;
+    final dLon = lon2 - lon1;
 
-    while (unvisitedNodes.isNotEmpty) {
-      unvisitedNodes.sort((a, b) => distances[a]!.compareTo(distances[b]!));
-      var closest = unvisitedNodes.removeAt(0);
+    final a =
+        pow(sin(dLat / 2), 2) + cos(lat1) * cos(lat2) * pow(sin(dLon / 2), 2);
 
-      if (distances[closest] == double.infinity) {
-        break;
-      }
+    final c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    final distance = earthRadius * c;
 
-      for (var neighbor in edges[closest]!.keys) {
-        var distance = distances[closest]! + edges[closest]![neighbor]!;
-        if (distance < distances[neighbor]!) {
-          distances[neighbor] = distance;
-          previous[neighbor] = closest;
+    return distance; // jarak dalam meter
+  }
+
+  Map<String, Map<String, dynamic>> shortestPath(Node startNode) {
+    final Map<String, double> distances = {};
+    final Map<String, Node?> previousNodes = {};
+    final List<Node> unvisited = List.from(nodes);
+
+    // Inisialisasi jarak dari startNode ke setiap node lainnya dengan nilai tak terhingga
+    for (final node in nodes) {
+      distances[node.name] = double.infinity;
+    }
+
+    distances[startNode.name] = 0;
+
+    while (unvisited.isNotEmpty) {
+      unvisited
+          .sort((a, b) => distances[a.name]!.compareTo(distances[b.name]!));
+      final currentNode = unvisited.removeAt(0);
+
+      for (final neighbor in _adjacencyMap[currentNode.name]!.keys) {
+        final alt = distances[currentNode.name]! +
+            _adjacencyMap[currentNode.name]![neighbor]!;
+        if (alt < distances[neighbor]!) {
+          distances[neighbor] = alt;
+          previousNodes[neighbor] = currentNode;
         }
       }
     }
 
-    return distances;
-  }
+    final sortedNodes = distances.entries.toList()
+      ..sort((a, b) => a.value.compareTo(b.value));
 
-  List<Point> shortestPath(Point start, Point end) {
-    var path = <Point>[];
-    Point? current = end;
-
-    while (current != null) {
-      path.insert(0, current);
-      current = previous[current];
+    final result = <String, Map<String, dynamic>>{};
+    for (final entry in sortedNodes) {
+      final nodeName = entry.key;
+      final distance = entry.value;
+      final node = nodes.firstWhere((node) => node.name == nodeName);
+      result[nodeName] = {
+        'distance': distance,
+        'latitude': node.latitude,
+        'longitude': node.longitude,
+      };
     }
 
-    return path;
+    return result;
   }
 }
 
-double algorithmDijkstra(routes) {
-  double distance = 0;
-  for (final route in routes) {
-    var edges = <Point, Map<Point, double>>{};
-    List<Point> point = [];
+Map<String, Map<String, dynamic>> algorithmDijkstra(
+    Position positionFirst, List<dynamic> routes) {
+  List<Node> nodes = [
+    Node("polisi", positionFirst.latitude, positionFirst.longitude),
+  ];
 
-    for (final r in route) {
-      point.add(Point(r["latitude"], r["longitude"]));
-    }
+  String name = "";
+  String beforeNameManipulated = "";
 
-    // Fill in the edges map with distances between points
-    for (var i = 0; i < point.length; i++) {
-      edges[point[i]] = {};
+  for (final r in routes) {
+    final location = r["location"];
 
-      for (var j = 0; j < point.length; j++) {
-        if (i != j) {
-          var distance = calculateDistance(point[i], point[j]);
-          edges[point[i]]![point[j]] = distance;
-        }
+    if (r["nama"] == name) {
+      final s = beforeNameManipulated.toString().split("-");
+      if (s.length > 1) {
+        r["nama"] = "${r["nama"]}-${int.parse(s[1]) + 1}";
+      } else {
+        r["nama"] = "${r["nama"]}-1";
       }
+      beforeNameManipulated = r["nama"];
+    } else {
+      name = r["nama"];
     }
 
-    var dijkstra = Dijkstra(point, edges);
-
-    var start = point[0];
-    var end = point[point.length - 1];
-
-    var shortestDistance = dijkstra.findShortestPath(start)[end];
-    // var shortestPath = dijkstra.shortestPath(start, end);
-
-    distance = shortestDistance!;
-    // logO('Shortest Path:');
-    // shortestPath.forEach((point) {
-    //   logO('Latitude: ${point.latitude}, Longitude: ${point.longitude}');
-    // });
+    nodes.add(Node(r["nama"], location["latitude"], location["longitude"]));
   }
 
-  return distance;
-}
+  Graph graph = Graph(nodes);
 
-double calculateDistance(Point a, Point b) {
-  var earthRadius = 6371; // in kilometers
-  var dLat = degreesToRadians(b.latitude - a.latitude);
-  var dLon = degreesToRadians(b.longitude - a.longitude);
-  var lat1 = degreesToRadians(a.latitude);
-  var lat2 = degreesToRadians(b.latitude);
-
-  var haversine =
-      pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(lat1) * cos(lat2);
-  var c = 2 * atan2(sqrt(haversine), sqrt(1 - haversine));
-
-  return earthRadius * c;
-}
-
-double degreesToRadians(double degrees) {
-  return degrees * (pi / 180);
+  Node startNode = nodes[0];
+  final result = graph.shortestPath(startNode);
+  return result;
 }

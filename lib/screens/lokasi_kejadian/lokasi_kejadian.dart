@@ -1,15 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:admin/services/firebase_services.dart';
 import 'package:admin/values/algorithm_dijkstra.dart';
 import 'package:admin/values/output_utils.dart';
 import 'package:admin/values/position_utils.dart';
 import 'package:flutter/material.dart';
-import '../../constants.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import "package:http/http.dart" as http;
 
 class LokasiKejadianScreen extends StatefulWidget {
   @override
@@ -95,32 +92,31 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
         },
       ];
 
+      final listDataFirst = [];
+
       for (var userData in listUserLoc) {
-        var targetLatitude = userData["lokasi"]["latitude"];
-        var targetLongitude = userData["lokasi"]["longitude"];
-
-        var url =
-            "https://api.tomtom.com/routing/1/calculateRoute/${position.latitude},${position.longitude}:$targetLatitude,$targetLongitude/json?key=$apiKey&maxAlternatives=0";
-
-        var result = await http.get(Uri.parse(url));
-        var res = json.decode(result.body)['routes'];
-
-        var routes = [];
-
-        for (var e in res) {
-          var points = e["legs"][0]["points"];
-          routes.add(points);
-        }
-
-        var distance = algorithmDijkstra(routes);
-
-        listDatauser.add({
+        listDataFirst.add({
           "nama": userData["nama"],
-          "jenis_laporan": userData["jenis_laporan"],
-          "tanggal": userData["tanggal"],
-          "lokasi": LatLng(targetLatitude, targetLongitude),
-          "jarak": distance
+          "location": userData["lokasi"],
         });
+      }
+
+      final result = algorithmDijkstra(position, listDataFirst);
+
+      for (final keyResult in result.keys) {
+        for (var userData in listUserLoc) {
+          if (result[keyResult]!["latitude"] ==
+              userData["lokasi"]["latitude"]) {
+            listDatauser.add({
+              "nama": keyResult,
+              "jenis_laporan": userData["jenis_laporan"],
+              "tanggal": userData["tanggal"],
+              "lokasi": LatLng(result[keyResult]!["latitude"],
+                  result[keyResult]!["longitude"]),
+              "jarak": result[keyResult]!["distance"]
+            });
+          }
+        }
       }
 
       setState(() {
@@ -176,45 +172,40 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
                       }).toList()),
                     ],
                   ),
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: SingleChildScrollView(
-                      child: Container(
-                        height: 300,
-                        child: ListView.builder(
-                          itemBuilder: (ctx, i) {
-                            final value = userData![i];
+                  Scrollbar(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (ctx, i) {
+                        final value = userData![i];
 
-                            final jarak = value["jarak"] as double;
-                            if (i > 0) {
-                              return Card(
-                                color: Colors.white,
-                                child: InkWell(
-                                  onTap: () {},
-                                  child: ListTile(
-                                    leading: CircleAvatar(child: Text("A")),
-                                    title: Text(value["nama"]),
-                                    subtitle: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(value["nama"]),
-                                          V(8),
-                                          Text(
-                                              "${jarak.toStringAsFixed(2)} km"),
-                                        ]),
-                                    // trailing: Icon(Icons.arrow_right),
-                                  ),
-                                ),
-                              );
-                            }
-                            return Container();
-                          },
-                          itemCount: userData?.length,
-                        ),
-                      ),
+                        final jarak = value["jarak"] as double;
+
+                        if (i > 0) {
+                          return Card(
+                            color: Colors.white,
+                            child: InkWell(
+                              onTap: () {},
+                              child: ListTile(
+                                leading: CircleAvatar(child: Text("A")),
+                                title: Text(value["nama"]),
+                                subtitle: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(value["nama"]),
+                                      V(8),
+                                      Text("${jarak.toStringAsFixed(2)} km"),
+                                    ]),
+                                // trailing: Icon(Icons.arrow_right),
+                              ),
+                            ),
+                          );
+                        }
+                        return Container();
+                      },
+                      itemCount: userData?.length,
                     ),
                   )
                 ],

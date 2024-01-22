@@ -74,7 +74,8 @@ class Body extends StatelessWidget {
         //       )
         //     : SizedBox(),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height / 6),
+          padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height / 6),
           child: Container(
             width: 0.24.w,
             child: _formLogin(context, onClickLogin),
@@ -84,7 +85,8 @@ class Body extends StatelessWidget {
     );
   }
 
-  Widget _formLogin(BuildContext context, void Function(dynamic isLogin)? onClickLogin) {
+  Widget _formLogin(
+      BuildContext context, void Function(dynamic isLogin)? onClickLogin) {
     return Column(
       children: [
         TextField(
@@ -144,14 +146,16 @@ class Body extends StatelessWidget {
             ],
           ),
           child: ElevatedButton(
-            child:
-                Container(width: double.infinity, height: 50, child: Center(child: Text("Login"))),
+            child: Container(
+                width: double.infinity,
+                height: 50,
+                child: Center(child: Text("Login"))),
             onPressed: () {
               l.onLogin(context, onClickLogin);
             },
             style: ElevatedButton.styleFrom(
-              primary: Colors.deepPurple,
-              onPrimary: Colors.white,
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.deepPurple,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),

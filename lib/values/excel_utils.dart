@@ -10,6 +10,7 @@ class ExcelUtils {
   Worksheet? _sheet;
   late Style titleStyle;
 
+  // ignore: non_constant_identifier_names
   final double COLUMN_CELL = 30;
 
   ExcelUtils() {
