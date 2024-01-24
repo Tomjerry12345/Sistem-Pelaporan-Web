@@ -172,40 +172,51 @@ class _LokasiKejadianScreenState extends State<LokasiKejadianScreen> {
                       }).toList()),
                     ],
                   ),
-                  Scrollbar(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (ctx, i) {
-                        final value = userData![i];
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Container(
+                        height: 300,
+                        child: SingleChildScrollView(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (ctx, i) {
+                              final value = userData![i];
 
-                        final jarak = value["jarak"] as double;
+                              final jarak = value["jarak"] as double;
 
-                        if (i > 0) {
-                          return Card(
-                            color: Colors.white,
-                            child: InkWell(
-                              onTap: () {},
-                              child: ListTile(
-                                leading: CircleAvatar(child: Text("A")),
-                                title: Text(value["nama"]),
-                                subtitle: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(value["nama"]),
-                                      V(8),
-                                      Text("${jarak.toStringAsFixed(2)} km"),
-                                    ]),
-                                // trailing: Icon(Icons.arrow_right),
-                              ),
-                            ),
-                          );
-                        }
-                        return Container();
-                      },
-                      itemCount: userData?.length,
+                              if (i > 0) {
+                                return Card(
+                                  color: Colors.white,
+                                  child: InkWell(
+                                    onTap: () {},
+                                    child: ListTile(
+                                      leading: CircleAvatar(child: Text("A")),
+                                      title: Text(value["nama"]),
+                                      subtitle: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(value["nama"]),
+                                            V(8),
+                                            Text(
+                                                "${jarak.toStringAsFixed(2)} km"),
+                                          ]),
+                                      // trailing: Icon(Icons.arrow_right),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Container();
+                            },
+                            itemCount: userData?.length,
+                          ),
+                        ),
+                      ),
                     ),
                   )
                 ],
